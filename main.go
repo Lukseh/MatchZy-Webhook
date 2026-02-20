@@ -25,9 +25,9 @@ type info struct {
 type templates map[util.Event]string
 
 func main() {
-	var domain, port, host, link, avatar, auth string
+	var port, host, link, avatar, auth string
 	var err error
-	util.ParseConfig(&domain, &host, &port, &avatar, &auth, &link)
+	util.ParseConfig(&host, &port, &avatar, &auth, &link)
 	if auth == "change_me" {
 		log.Fatalln("Change default AUTH")
 	}

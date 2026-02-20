@@ -10,7 +10,7 @@ Server listening for MatchZy events and formatting them to display using Discord
 
 - Edit templates.json to your needs
 
-- Set matchzy_remote_log_url to (DOMAIN)/matchzy and matchzy_remote_log_header_value to (AUTH) from env
+- Set matchzy_remote_log_url to $Your_domain/matchzy and matchzy_remote_log_header_value to same value as(AUTH) from env
 
 ## Contribution
 
