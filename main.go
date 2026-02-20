@@ -24,18 +24,34 @@ type info struct {
 }
 type templates map[util.Event]string
 
+type config struct {
+	Server struct {
+		Host string `json:"host"`
+		Port uint8  `json:"port"`
+		Auth string `json:"auth"`
+	} `json:"server"`
+	Discord struct {
+		AvatarUrl string `json:"avatar_url"`
+		Webhook   string `json:"webhook"`
+	} `json:"discord"`
+}
+
 func main() {
-	var port, host, link, avatar, auth string
-	var err error
-	util.ParseConfig(&host, &port, &avatar, &auth, &link)
-	if auth == "change_me" {
-		log.Fatalln("Change default AUTH")
+
+	var cfg config
+	configFile, err := os.ReadFile("./config/config.json")
+	if err != nil {
+		log.Println("Error parsing config: ", err)
+	}
+	err = json.Unmarshal(configFile, &cfg)
+	if err != nil {
+		log.Println("Error parsing config: ", err)
 	}
 
 	info := info{
 		username: "MatchZy Webhooks",
-		avatar:   avatar,
-		url:      link,
+		avatar:   cfg.Discord.AvatarUrl,
+		url:      cfg.Discord.Webhook,
 	}
 
 	// Logging to file
@@ -69,12 +85,12 @@ func main() {
 	UpdateTemplates() // It needs to be outside function because i want to add watching for changes on template file.
 
 	app.Use("/", static.New("./public/"))
-	app.Post("/matchzy", util.AuthCheck(auth), func(c fiber.Ctx) error {
+	app.Post("/matchzy", util.AuthCheck(cfg.Server.Auth), func(c fiber.Ctx) error {
 		SendMsg(templates, &info, c.BodyRaw())
 		return c.Status(fiber.StatusOK).SendString("MatchZy endpoint.")
 	})
-	log.Printf("Listening on http://%s:%s", host, port)
-	log.Fatalln(app.Listen(fmt.Sprint(host, ":", port), fiber.ListenConfig{
+	log.Printf("Listening on http://%s:%s", cfg.Server.Host, cfg.Server.Port)
+	log.Fatalln(app.Listen(fmt.Sprint(cfg.Server.Host, ":", cfg.Server.Port), fiber.ListenConfig{
 		DisableStartupMessage: true,
 	}))
 }

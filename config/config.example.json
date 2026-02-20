@@ -1,0 +1,11 @@
+{
+  "server": {
+    "host": "",
+    "port": 7474,
+    "auth": "testkey"
+  },
+  "discord": {
+    "avatar_url": "",
+    "webhook": ""
+  }
+}

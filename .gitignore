@@ -34,3 +34,5 @@ go.work.sum
 
 # webhooks specific
 logs/**
+
+config/config.json

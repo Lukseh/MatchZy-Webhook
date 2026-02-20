@@ -4,7 +4,7 @@ Server listening for MatchZy events and formatting them to display using Discord
 
 ## Setup
 
-- copy .env.example as .env and fill it out
+- copy config.example.json to config.json and fill it out
 
 - use ``` go run main.go ``` or build it into .exe with ``` go build main.go ```
 

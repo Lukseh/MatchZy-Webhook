@@ -11,7 +11,7 @@ FROM scratch
 WORKDIR /app
 COPY --from=build /build/server .
 COPY templates.json .
-COPY .env .
+COPY config ./config
 COPY public ./public
 
 ENTRYPOINT ["./server"]
