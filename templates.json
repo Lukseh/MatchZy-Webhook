@@ -1,0 +1,10 @@
+{
+  "_comment": "DONT EDIT FIELDS WITH _ AT START, THESE ARE ONLY INFO REGARDING FORMATTING OPTIONS",
+  "_series_start": [
+    "$TEAM1",
+    "$TEAM2",
+    "$MAPS",
+    "$MATCHID"
+  ],
+  "series_start": "--Lxki League--\n BO$MAPS\n #$MATCHID \n$TEAM1 vs $TEAM2"
+}
