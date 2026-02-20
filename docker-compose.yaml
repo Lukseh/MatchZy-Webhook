@@ -1,0 +1,14 @@
+services:
+  webhook:
+    image: ghcr.io/lukseh/matchzy-webhook:main
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config:ro
+    # ports:
+    #   - "7474:7474"
+    # networks:
+    #   - proxy
+
+    # networks:
+    #   proxy:
+    #     external: true

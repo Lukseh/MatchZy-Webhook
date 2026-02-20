@@ -89,7 +89,7 @@ func main() {
 		SendMsg(templates, &info, c.BodyRaw())
 		return c.Status(fiber.StatusOK).SendString("MatchZy endpoint.")
 	})
-	log.Printf("Listening on http://%s:%s", cfg.Server.Host, cfg.Server.Port)
+	log.Printf("Listening on http://%s:%d", cfg.Server.Host, cfg.Server.Port)
 	log.Fatalln(app.Listen(fmt.Sprint(cfg.Server.Host, ":", cfg.Server.Port), fiber.ListenConfig{
 		DisableStartupMessage: true,
 	}))
