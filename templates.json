@@ -6,5 +6,6 @@
     "$MAPS",
     "$MATCHID"
   ],
-  "series_start": "--Lxki League--\n BO$MAPS\n #$MATCHID \n$TEAM1 vs $TEAM2"
+  "series_start": "--Lxki League--\n BO$MAPS\n #$MATCHID \n$TEAM1 vs $TEAM2",
+  "map_result": "--Lxki League--\n MATCH: $MATCHID \n MAP: $MAP \n $TEAM1: $SCORE1 vs $SCORE2 :$TEAM2 \n $TEAM1($SIDE1): $MAPS1 \n$FOREACH($PLAYERS1, '- $NICKNAME \n') \n $TEAM2($SIDE2): $MAPS2 \n $FOREACH($PLAYERS2, ' $NICKNAME \n ')"
 }

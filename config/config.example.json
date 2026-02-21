@@ -1,11 +1,18 @@
 {
   "server": {
-    "host": "",
+    "host": "localhost",
     "port": 7474,
-    "auth": "testkey"
+    "auth": {
+      "header": "X-MatchZy-Auth",
+      "value": "randomhashstring"
+    }
   },
   "discord": {
-    "avatar_url": "",
+    "avatar_url": "https://raw.githubusercontent.com/Lukseh/MatchZy-Webhook/main/public/def.png",
     "webhook": ""
+  },
+  "cloudflare": {
+    "use_cloudflare": true,
+    "free_tunnel": true
   }
 }

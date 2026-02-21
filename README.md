@@ -16,7 +16,7 @@ Server listening for MatchZy events and formatting them to display using Discord
 
 ### Docker
 
-I inluded Dockerfile and docker-compose.yaml and made automatically updated image ghcr.io/lukseh/matchzy-webhook:main so you can see how to setup fast and easy.
+I included Dockerfile and docker-compose.yaml and made automatically updated image ghcr.io/lukseh/matchzy-webhook:main so you can see how to setup fast and easy.
 
 Please use Nginx or any other proxy in front of it, or at least use VPS with good firewall and fail2ban if using opened ports
 
