@@ -29,6 +29,51 @@ const (
 	SurvivalDraw                  Reason = 0x16
 )
 
+func ReasonToString(r Reason) string {
+	switch r {
+	case TargetBombed:
+		return "Target bombed"
+	case TerroristsEscaped:
+		return "Terrorists escaped"
+	case CTsPreventEscape:
+		return "CTs prevented escape"
+	case EscapingTerroristsNeutralized:
+		return "Escaping terrorists neutralized"
+	case BombDefused:
+		return "Bomb defused"
+	case CTsWin:
+		return "CTs win"
+	case TerroristsWin:
+		return "Terrorists win"
+	case RoundDraw:
+		return "Round draw"
+	case AllHostageRescued:
+		return "All hostages rescued"
+	case TargetSaved:
+		return "Target saved"
+	case HostagesNotRescued:
+		return "Hostages not rescued"
+	case TerroristsNotEscaped:
+		return "Terrorists not escaped"
+	case GameCommencing:
+		return "Game commencing"
+	case TerroristsSurrender:
+		return "Terrorists surrendered"
+	case CTsSurrender:
+		return "CTs surrendered"
+	case TerroristsPlanted:
+		return "Terrorists planted bomb"
+	case CTsReachedHostage:
+		return "CTs reached hostage"
+	case SurvivalWin:
+		return "Survival win"
+	case SurvivalDraw:
+		return "Survival draw"
+	default:
+		return "Unknown"
+	}
+}
+
 type Teams map[Team]Team_t
 
 var TeamDictionary = make(Teams)

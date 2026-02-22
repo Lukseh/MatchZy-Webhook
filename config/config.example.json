@@ -1,4 +1,7 @@
 {
+  "cs": {
+    "round_time": 1.92
+  },
   "server": {
     "host": "localhost",
     "port": 7474,

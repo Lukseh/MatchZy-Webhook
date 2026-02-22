@@ -27,6 +27,9 @@ type info struct {
 type templates map[util.Event]string
 
 type config struct {
+	CS struct {
+		RoundTime float64 `json:"round_time"`
+	} `json:"cs"`
 	Server struct {
 		Host string `json:"host"`
 		Port uint16 `json:"port"`
@@ -34,6 +37,7 @@ type config struct {
 			Header string `json:"header"`
 			Value  string `json:"value"`
 		} `json:"auth"`
+		DryRun bool `json:"dryrun,omitempty"`
 	} `json:"server"`
 	Discord struct {
 		AvatarUrl string `json:"avatar_url"`
@@ -96,7 +100,7 @@ func main() {
 
 	app.Use("/", static.New("./public/"))
 	app.Post("/matchzy", util.AuthCheck(cfg.Server.Auth), func(c fiber.Ctx) error {
-		SendMsg(templates, &info, c.BodyRaw())
+		SendMsg(templates, &info, c.BodyRaw(), cfg)
 		return c.Status(fiber.StatusOK).SendString("MatchZy endpoint.")
 	})
 	log.Printf("Listening on http://%s:%d", cfg.Server.Host, cfg.Server.Port)
@@ -124,7 +128,7 @@ func main() {
 
 }
 
-func SendMsg(templates templates, info *info, msgraw []byte) {
+func SendMsg(templates templates, info *info, msgraw []byte, cfg config) {
 
 	var res util.MatchZyRes
 	if err := json.Unmarshal(msgraw, &res); err != nil {
@@ -136,24 +140,26 @@ func SendMsg(templates templates, info *info, msgraw []byte) {
 	msg = templates[res.Event]
 	log.Println("event: ", res.Event)
 
-	msg = replaceMsg(msg, res)
+	msg = replaceMsg(msg, res, cfg)
 
 	log.Println("msg: ", msg)
 
-	err := discordwebhook.SendMessage(info.url, discordwebhook.Message{
-		Username:  &info.username,
-		AvatarUrl: &info.avatar,
-		Content:   &msg,
-	})
-	if err != nil {
-		log.Println(err)
+	if !cfg.Server.DryRun {
+		err := discordwebhook.SendMessage(info.url, discordwebhook.Message{
+			Username:  &info.username,
+			AvatarUrl: &info.avatar,
+			Content:   &msg,
+		})
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }
 
-func replaceMsg(msg string, data any) string {
-	return processForeach(msg, reflect.ValueOf(data))
+func replaceMsg(msg string, data any, cfg config) string {
+	return processForeach(msg, reflect.ValueOf(data), cfg)
 }
-func processForeach(msg string, v reflect.Value) string {
+func processForeach(msg string, v reflect.Value, cfg config) string {
 	for {
 		start := strings.Index(msg, "$FOREACH(")
 		if start == -1 {
@@ -179,13 +185,13 @@ func processForeach(msg string, v reflect.Value) string {
 		}
 		var repeated string
 		for i := 0; i < sliceVal.Len(); i++ {
-			repeated += walk(innerTemplate, sliceVal.Index(i))
+			repeated += walk(innerTemplate, sliceVal.Index(i), cfg)
 		}
 		msg = strings.ReplaceAll(msg, placeholder, repeated)
 	}
-	return walk(msg, v)
+	return walk(msg, v, cfg)
 }
-func walk(msg string, v reflect.Value) string {
+func walk(msg string, v reflect.Value, cfg config) string {
 	if v.Kind() == reflect.Ptr {
 		if v.IsNil() {
 			return msg
@@ -201,14 +207,23 @@ func walk(msg string, v reflect.Value) string {
 		fieldType := t.Field(i)
 		tag := fieldType.Tag.Get("str")
 		if tag != "" {
-			msg = strings.ReplaceAll(msg, "$"+tag, valueToString(field))
+			switch tag {
+			case "DUROUND":
+				if field.Kind() >= reflect.Uint && field.Kind() <= reflect.Uint64 {
+					msg = strings.ReplaceAll(msg, "$"+tag, formatDuration(field.Uint(), cfg.CS.RoundTime))
+				}
+			case "REASON":
+				msg = strings.ReplaceAll(msg, "$"+tag, util.ReasonToString(util.Reason(field.Uint())))
+			default:
+				msg = strings.ReplaceAll(msg, "$"+tag, valueToString(field))
+			}
 		}
 		switch field.Kind() {
 		case reflect.Struct:
-			msg = walk(msg, field)
+			msg = walk(msg, field, cfg)
 		case reflect.Ptr:
 			if !field.IsNil() {
-				msg = walk(msg, field.Elem())
+				msg = walk(msg, field.Elem(), cfg)
 			}
 		}
 	}
@@ -252,4 +267,12 @@ func valueToString(v reflect.Value) string {
 		return fmt.Sprint(v.Bool())
 	}
 	return ""
+}
+func formatDuration(ms uint64, roundtime float64) string {
+	totalMs := uint64(roundtime * 60 * 1000)
+	leftMs := totalMs - ms
+	seconds := leftMs / 1000
+	minutes := seconds / 60
+	seconds = seconds % 60
+	return fmt.Sprintf("%02d:%02d", minutes, seconds)
 }
