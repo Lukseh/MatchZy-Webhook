@@ -67,7 +67,7 @@ func main() {
 	// Logging to file
 	var logFile *os.File
 	t := time.Now()
-	formatted := t.Format("2006-01-02-15:04:05")
+	formatted := t.Format("2006-01-02-15-04-05")
 	if err := os.MkdirAll("./logs", 0755); err != nil {
 		log.Fatalln("Failed to create logs directory:", err)
 	}
