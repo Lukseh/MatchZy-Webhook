@@ -116,10 +116,12 @@ func main() {
 
 			log.Println("Tunnel url: ", url)
 
-			log.Printf("Enter these commands in console: \n matchzy_remote_log_url %s/matchzy \n matchzy_remote_log_header_key %s \n matchzy_remote_log_header_value %s", url, cfg.Server.Auth.Header, cfg.Server.Auth.Value)
+			log.Printf("Enter these commands in console: \nmatchzy_remote_log_url %s/matchzy\nmatchzy_remote_log_header_key %s\nmatchzy_remote_log_header_value %s", url, cfg.Server.Auth.Header, cfg.Server.Auth.Value)
 
 			defer cancel()
 		}
+	} else {
+		log.Printf("Enter these commands in connsole: \nmatchzy_remote_log_header_key %s\nmatchzy_remote_log_header_value %s", cfg.Server.Auth.Header, cfg.Server.Auth.Value)
 	}
 
 	log.Fatalln(app.Listen(fmt.Sprint(cfg.Server.Host, ":", cfg.Server.Port), fiber.ListenConfig{
