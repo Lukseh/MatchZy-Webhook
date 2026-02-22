@@ -2,7 +2,10 @@ package main
 
 import (
 	"MatchZy-Webhook/util"
+	"bufio"
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -80,6 +83,20 @@ func main() {
 	}
 	mw := io.MultiWriter(log.Writer(), logFile)
 	log.SetOutput(mw)
+
+	if cfg.Server.Auth.Value == "randomhashstring" {
+		log.Println("It is not advised to used unchanged header value, please consider using random one.\nWould you like to generate and use one now?")
+		reader := bufio.NewReader(os.Stdin)
+		log.Println("(Y/n)")
+		text, _ := reader.ReadString('\n')
+		text = strings.TrimSpace(text)
+		if text != "no" && text != "n" {
+			randomBytes := make([]byte, 32)
+			rand.Read(randomBytes)
+			cfg.Server.Auth.Value = base64.RawURLEncoding.EncodeToString(randomBytes)
+			log.Printf("Generated new key, please change the one in config.json to: %s\n", cfg.Server.Auth.Value)
+		}
+	}
 
 	app := fiber.New()
 
