@@ -1,6 +1,10 @@
 # MatchZy-Webhook
 
-Server listening for MatchZy events and formatting them to display using Discord webhooks.
+MatchZy Webhook listens for Events on your MatchZy server and pushes Discord message formatted via templates allowing for Customisation with option to display data from server with placeholders like $MAP etc...
+
+Supports all Events currently but I didn't yet document which Events allow for which placeholders.
+
+Config allows for using free Cloudflared tunnel to securely expose the server fast and easy and gives copy & paste commands in terminal allowing for quick setup before matches.
 
 ## Setup
 

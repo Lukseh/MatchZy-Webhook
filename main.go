@@ -187,23 +187,32 @@ func processForeach(msg string, v reflect.Value) string {
 }
 func walk(msg string, v reflect.Value) string {
 	if v.Kind() == reflect.Ptr {
+		if v.IsNil() {
+			return msg
+		}
 		v = v.Elem()
 	}
 	if v.Kind() != reflect.Struct {
 		return msg
 	}
-
 	t := v.Type()
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
-		tag := t.Field(i).Tag.Get("str")
+		fieldType := t.Field(i)
+		tag := fieldType.Tag.Get("str")
 		if tag != "" {
 			msg = strings.ReplaceAll(msg, "$"+tag, valueToString(field))
 		}
-		if field.Kind() == reflect.Struct {
+		switch field.Kind() {
+		case reflect.Struct:
 			msg = walk(msg, field)
+		case reflect.Ptr:
+			if !field.IsNil() {
+				msg = walk(msg, field.Elem())
+			}
 		}
 	}
+
 	return msg
 }
 func findSliceByTag(v reflect.Value, tag string) reflect.Value {

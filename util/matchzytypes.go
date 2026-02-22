@@ -4,6 +4,31 @@ type Event string
 type Side string
 type Team string
 
+type Reason uint64
+
+const (
+	Unknown                       Reason = 0x0
+	TargetBombed                  Reason = 0x1
+	TerroristsEscaped             Reason = 0x4
+	CTsPreventEscape              Reason = 0x5
+	EscapingTerroristsNeutralized Reason = 0x6
+	BombDefused                   Reason = 0x7
+	CTsWin                        Reason = 0x8
+	TerroristsWin                 Reason = 0x9
+	RoundDraw                     Reason = 0xA
+	AllHostageRescued             Reason = 0xB
+	TargetSaved                   Reason = 0xC
+	HostagesNotRescued            Reason = 0xD
+	TerroristsNotEscaped          Reason = 0xE
+	GameCommencing                Reason = 0x10
+	TerroristsSurrender           Reason = 0x11
+	CTsSurrender                  Reason = 0x12
+	TerroristsPlanted             Reason = 0x13
+	CTsReachedHostage             Reason = 0x14
+	SurvivalWin                   Reason = 0x15
+	SurvivalDraw                  Reason = 0x16
+)
+
 type Teams map[Team]Team_t
 
 var TeamDictionary = make(Teams)
@@ -24,12 +49,28 @@ const (
 	Spec  Team = "spec"
 )
 
+// str tags should never have common start
 type MatchZyRes struct {
 	Event   Event  `json:"event"`
 	MatchID uint64 `json:"matchid" str:"MATCHID"`
+
+	Winner struct {
+		Side Side `json:"side,omitempty"`
+		Team Team `json:"team,omitempty" str:"WINNER"`
+	} `json:"winner,omitempty"`
+	MapNumber uint8   `json:"map_number,omitempty" str:"NUMMAP"`
+	MapName   string  `json:"map_name,omitempty" str:"PICKEDMAP"`
+	Team      Team    `json:"team,omitempty" str:"SELECTOR"`
+	Side      string  `json:"side,omitempty" str:"SIDEPICKED"`
+	Team1     Team1_t `json:"team1,omitempty"`
+	Team2     Team2_t `json:"team2,omitempty"`
+
+	// Some events are missing due to using only common fields
 	SeriesStart
-	MapResult
+	SeriesResult
+	RoundEnd
 }
+
 type Team_t struct {
 	Team1    Team1_t
 	Team2    Team2_t
@@ -209,10 +250,14 @@ type SeriesStart struct {
 	Team2   Team2_t `json:"team2,omitempty"`
 }
 
-type MapResult struct {
-	MapNumber uint8 `json:"map_number,omitempty" str:"MAP"`
-	Winner    struct {
-		Side Side `json:"side"`
-		Team Team `json:"team"`
-	} `json:"winner,omitempty"`
+type SeriesResult struct {
+	Team1SeriesScore uint8  `json:"team1_series_score,omitempty" str:"SERIES1"`
+	Team2SeriesScore uint8  `json:"team2_series_score,omitempty" str:"SERIES2"`
+	TimeUntilRestore uint16 `json:"time_until_restore,omitempty"`
+}
+
+type RoundEnd struct {
+	RoundNumber uint8  `json:"round_number,omitempty" str:"ROUND"`
+	RoundTime   uint64 `json:"round_time,omitempty" str:"DUROUND"`
+	Reason      Reason `json:"reason,omitempty" str:"REASON"`
 }
