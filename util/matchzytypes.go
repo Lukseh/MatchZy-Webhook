@@ -29,46 +29,46 @@ const (
 	SurvivalDraw                  Reason = 0x16
 )
 
-func ReasonToString(r Reason) string {
+func ReasonToString(r Reason, templates Templates) string {
 	switch r {
 	case TargetBombed:
-		return "Target bombed"
+		return templates.Reasons["target_bombed"]
 	case TerroristsEscaped:
-		return "Terrorists escaped"
+		return templates.Reasons["terrorists_escaped"]
 	case CTsPreventEscape:
-		return "CTs prevented escape"
+		return templates.Reasons["cts_prevented_escape"]
 	case EscapingTerroristsNeutralized:
-		return "Escaping terrorists neutralized"
+		return templates.Reasons["escaping_terrorists_neutralized"]
 	case BombDefused:
-		return "Bomb defused"
+		return templates.Reasons["bomb_defused"]
 	case CTsWin:
-		return "CTs win"
+		return templates.Reasons["cts_win"]
 	case TerroristsWin:
-		return "Terrorists win"
+		return templates.Reasons["terrorists_win"]
 	case RoundDraw:
-		return "Round draw"
+		return templates.Reasons["round_draw"]
 	case AllHostageRescued:
-		return "All hostages rescued"
+		return templates.Reasons["all_hostage_rescued"]
 	case TargetSaved:
-		return "Target saved"
+		return templates.Reasons["target_saved"]
 	case HostagesNotRescued:
-		return "Hostages not rescued"
+		return templates.Reasons["hostages_not_rescued"]
 	case TerroristsNotEscaped:
-		return "Terrorists not escaped"
+		return templates.Reasons["terrorists_not_escaped"]
 	case GameCommencing:
-		return "Game commencing"
+		return templates.Reasons["game_commencing"]
 	case TerroristsSurrender:
-		return "Terrorists surrendered"
+		return templates.Reasons["terrorists_surrender"]
 	case CTsSurrender:
-		return "CTs surrendered"
+		return templates.Reasons["cts_surrender"]
 	case TerroristsPlanted:
-		return "Terrorists planted bomb"
+		return templates.Reasons["terrorists_planted"]
 	case CTsReachedHostage:
-		return "CTs reached hostage"
+		return templates.Reasons["cts_reached_hostage"]
 	case SurvivalWin:
-		return "Survival win"
+		return templates.Reasons["survival_win"]
 	case SurvivalDraw:
-		return "Survival draw"
+		return templates.Reasons["survival_draw"]
 	default:
 		return "Unknown"
 	}

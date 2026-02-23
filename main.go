@@ -27,7 +27,6 @@ type info struct {
 	avatar   string
 	url      string
 }
-type templates map[util.Event]string
 
 type config struct {
 	CS struct {
@@ -101,7 +100,7 @@ func main() {
 	app := fiber.New()
 
 	// Templates
-	var templates templates
+	var templates util.Templates
 	UpdateTemplates := func() {
 		templatefile, err := os.ReadFile("templates.json")
 		if err != nil {
@@ -147,7 +146,7 @@ func main() {
 
 }
 
-func SendMsg(templates templates, info *info, msgraw []byte, cfg config) {
+func SendMsg(templates util.Templates, info *info, msgraw []byte, cfg config) {
 
 	var res util.MatchZyRes
 	if err := json.Unmarshal(msgraw, &res); err != nil {
@@ -156,10 +155,10 @@ func SendMsg(templates templates, info *info, msgraw []byte, cfg config) {
 	}
 	var msg string
 
-	msg = templates[res.Event]
+	msg = templates.Events[res.Event]
 	log.Println("event: ", res.Event)
 
-	msg = replaceMsg(msg, res, cfg)
+	msg = replaceMsg(msg, res, cfg, templates)
 
 	log.Println("msg: ", msg)
 
@@ -175,10 +174,10 @@ func SendMsg(templates templates, info *info, msgraw []byte, cfg config) {
 	}
 }
 
-func replaceMsg(msg string, data any, cfg config) string {
-	return processForeach(msg, reflect.ValueOf(data), cfg)
+func replaceMsg(msg string, data any, cfg config, templates util.Templates) string {
+	return processForeach(msg, reflect.ValueOf(data), cfg, templates)
 }
-func processForeach(msg string, v reflect.Value, cfg config) string {
+func processForeach(msg string, v reflect.Value, cfg config, templates util.Templates) string {
 	for {
 		start := strings.Index(msg, "$FOREACH(")
 		if start == -1 {
@@ -204,13 +203,13 @@ func processForeach(msg string, v reflect.Value, cfg config) string {
 		}
 		var repeated string
 		for i := 0; i < sliceVal.Len(); i++ {
-			repeated += walk(innerTemplate, sliceVal.Index(i), cfg)
+			repeated += walk(innerTemplate, sliceVal.Index(i), cfg, templates)
 		}
 		msg = strings.ReplaceAll(msg, placeholder, repeated)
 	}
-	return walk(msg, v, cfg)
+	return walk(msg, v, cfg, templates)
 }
-func walk(msg string, v reflect.Value, cfg config) string {
+func walk(msg string, v reflect.Value, cfg config, templates util.Templates) string {
 	if v.Kind() == reflect.Ptr {
 		if v.IsNil() {
 			return msg
@@ -232,17 +231,17 @@ func walk(msg string, v reflect.Value, cfg config) string {
 					msg = strings.ReplaceAll(msg, "$"+tag, formatDuration(field.Uint(), cfg.CS.RoundTime))
 				}
 			case "REASON":
-				msg = strings.ReplaceAll(msg, "$"+tag, util.ReasonToString(util.Reason(field.Uint())))
+				msg = strings.ReplaceAll(msg, "$"+tag, util.ReasonToString(util.Reason(field.Uint()), templates))
 			default:
 				msg = strings.ReplaceAll(msg, "$"+tag, valueToString(field))
 			}
 		}
 		switch field.Kind() {
 		case reflect.Struct:
-			msg = walk(msg, field, cfg)
+			msg = walk(msg, field, cfg, templates)
 		case reflect.Ptr:
 			if !field.IsNil() {
-				msg = walk(msg, field.Elem(), cfg)
+				msg = walk(msg, field.Elem(), cfg, templates)
 			}
 		}
 	}

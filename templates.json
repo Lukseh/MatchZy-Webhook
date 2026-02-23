@@ -1,10 +1,33 @@
 {
-  "series_start": "",
-  "map_result": "",
-  "series_result": "",
-  "side_picked": "",
-  "map_picked": "",
-  "map_vetoed": "",
-  "going_live": "",
-  "round_end": ""
+  "reasons": {
+    "target_bombed": "",
+    "terrorists_escaped": "",
+    "cts_prevented_escape": "",
+    "escaping_terrorists_neutralized": "",
+    "bomb_defused": "",
+    "cts_win": "",
+    "terrorists_win": "",
+    "round_draw": "",
+    "all_hostage_rescued": "",
+    "target_saved": "",
+    "hostages_not_rescued": "",
+    "terrorists_not_escaped": "",
+    "game_commencing": "",
+    "terrorists_surrender": "",
+    "cts_surrender": "",
+    "terrorists_planted": "",
+    "cts_reached_hostage": "",
+    "survival_win": "",
+    "survival_draw": ""
+  },
+  "events": {
+    "series_start": "",
+    "map_result": "",
+    "series_result": "",
+    "side_picked": "",
+    "map_picked": "",
+    "map_vetoed": "",
+    "going_live": "",
+    "round_end": ""
+  }
 }
